@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
-import { Plus, Calendar as CalendarIcon, Edit2, Trash2, Trash, CheckCircle2, Circle, Repeat, MoreVertical } from 'lucide-react';
+import { Plus, Calendar as CalendarIcon, Edit2, Trash2, Trash, Repeat, MoreVertical } from 'lucide-react';
 import { Menu, Transition } from '@headlessui/react';
 
-const FollowUpList = ({ followUps, setViewMode, handleDelete, handleEdit, toggleStatus, clearAllFollowUps }) => {
+const FollowUpList = ({ followUps, setViewMode, handleDelete, handleEdit, clearAllFollowUps }) => {
   const getRepeatText = (item) => {
     if (!item.repeatEnabled) return null;
     
@@ -50,7 +50,7 @@ const FollowUpList = ({ followUps, setViewMode, handleDelete, handleEdit, toggle
         {followUps.length > 0 && (
           <button 
             onClick={clearAllFollowUps}
-            className="flex items-center gap-1 text-[11px] text-red-500 hover:text-red-500 transition-colors cursor-pointer px-1"
+            className="flex items-center gap-1 text-[11px] text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer px-1"
           >
             <Trash size={12} /> ยกเลิกทั้งหมด
           </button>
@@ -69,7 +69,7 @@ const FollowUpList = ({ followUps, setViewMode, handleDelete, handleEdit, toggle
         ) : (
           followUps.map(item => (
             <div key={item.id} className="border border-gray-200 rounded-lg p-4 flex items-start gap-4 hover:shadow-md transition-all bg-white">
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
                   <h4 className="font-semibold text-base text-gray-800">
                     {item.note}
@@ -107,7 +107,7 @@ const FollowUpList = ({ followUps, setViewMode, handleDelete, handleEdit, toggle
                               <button
                                 onClick={() => handleDelete(item.id)}
                                 className={`${
-                                  active ? 'bg-red-50 text-red-600' : 'text-gray-700'
+                                  active ? 'bg-blue-50 text-[#0066FF]' : 'text-gray-700'
                                 } group flex w-full items-center px-3 py-2 text-xs cursor-pointer transition-colors`}
                               >
                                 <Trash2 size={14} className="mr-2" />
@@ -122,7 +122,7 @@ const FollowUpList = ({ followUps, setViewMode, handleDelete, handleEdit, toggle
                 </div>
                 <div className="flex items-center flex-wrap gap-3 mt-2 text-[10px] md:text-xs text-gray-500">
                   <span className="flex items-center">
-                    <CalendarIcon size={12} className="mr-1 text-gray-400"/> {item.date}
+                    <CalendarIcon size={12} className="mr-1 text-gray-400"/> {item.date}{item.time ? ` ${item.time} น.` : ''}
                   </span>
                   
                   {item.reminderEnabled && (

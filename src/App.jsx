@@ -5,19 +5,19 @@ import LeadInfoBar from './components/LeadInfoBar';
 import PipelineStepper from './components/PipelineStepper';
 import Sidebar from './components/Sidebar';
 import FollowUpList from './components/FollowUpList';
+import FollowUpForm from './components/FollowUpForm';
 import LeadScore from './components/Widgets/LeadScore';
 import ContactInfo from './components/Widgets/ContactInfo';
 import CustomerRegistration from './components/Widgets/CustomerRegistration';
 import ConfirmModal from './components/ConfirmModal';
 
 const App = () => {
-  // ... existing state ...
   const [viewMode, setViewMode] = useState('list');
   const [followUps, setFollowUps] = useState([]);
+  const [editingItem, setEditingItem] = useState(null);
   const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
   const [deleteItemId, setDeleteItemId] = useState(null);
 
-  // ... handlers ...
   const handleDelete = () => {
     if (deleteItemId) {
       setFollowUps(followUps.filter(f => f.id !== deleteItemId));
@@ -25,15 +25,29 @@ const App = () => {
     }
   };
 
-  const toggleStatus = (id) => {
-    setFollowUps(followUps.map(item => 
-      item.id === id ? { ...item, status: item.status === 'completed' ? 'pending' : 'completed' } : item
-    ));
-  };
-
   const clearAllFollowUps = () => {
     setFollowUps([]);
     setIsDeleteAllModalOpen(false);
+  };
+
+  const handleSave = (data) => {
+    if (editingItem) {
+      setFollowUps(followUps.map(f => f.id === data.id ? data : f));
+    } else {
+      setFollowUps([data, ...followUps]);
+    }
+    setEditingItem(null);
+    setViewMode('list');
+  };
+
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setViewMode('form');
+  };
+
+  const handleCancel = () => {
+    setEditingItem(null);
+    setViewMode('list');
   };
 
   return (
@@ -50,25 +64,23 @@ const App = () => {
           <Sidebar />
 
           <div className="flex-1 flex flex-col p-5 md:p-8 overflow-y-auto">
-            {viewMode === 'list' ? (
+            {(viewMode === 'list' && followUps.length > 0) ? (
               <FollowUpList 
                 followUps={followUps} 
-                setViewMode={setViewMode} 
+                setViewMode={() => { setEditingItem(null); setViewMode('form'); }}
                 handleDelete={setDeleteItemId}
-                handleEdit={() => setViewMode('form')}
-                toggleStatus={toggleStatus}
+                handleEdit={handleEdit}
                 clearAllFollowUps={() => setIsDeleteAllModalOpen(true)}
               />
             ) : (
               <div className="flex-1 bg-white flex flex-col">
-                <button 
-                  onClick={() => setViewMode('list')}
-                  className="flex items-center gap-2 text-[#0066FF] hover:text-[#0052cc] transition-colors font-semibold text-sm mb-4 cursor-pointer w-fit"
-                >
-                  <ArrowLeft size={18} />
-                  <span>Back</span>
-                </button>
-                <div className="flex-1" /> {/* Blank area */}
+
+                <FollowUpForm
+                  editingItem={editingItem}
+                  onSave={handleSave}
+                  onCancel={handleCancel}
+                  showCancel={followUps.length > 0}
+                />
               </div>
             )}
           </div>
